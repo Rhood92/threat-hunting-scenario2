@@ -30,6 +30,8 @@ DeviceNetworkEvents
 - The device `rich-mde-test` failed 69 connection requests against itself.
 - The IP `10.0.0.156` showed sequential failed connection attempts, indicating a possible port scan.
 
+![image](https://github.com/user-attachments/assets/b57aeed8-12da-44b8-b91a-f5dd82eb72e9)
+
 ### 📝 Query 2: Identify Port Scanning Activity
 ```kql
 let IPInQuestion = "10.0.0.156";
@@ -41,6 +43,8 @@ DeviceNetworkEvents
 
 **Findings:**
 - Sequential failed connections suggest automated port scanning.
+
+![image](https://github.com/user-attachments/assets/ea2279d1-f6fb-4281-a7ec-a49c60376031)
 
 ---
 
@@ -54,13 +58,17 @@ DeviceProcessEvents
 | where Timestamp between ((specificTime - 60m) .. (specificTime + 60m))
 | where DeviceName == VMName
 | order by Timestamp desc
-| project Timestamp, FileName, InitiatingProcessCommandLine
+| project Timestamp, FileName, InitiatingProcessCommandLine, AccountName
 ```
 
 **Findings:**
 - A PowerShell script `portscan.ps1` was executed at `2025-02-28T00:37:05.8693723Z`.
 - The script was executed by the `SYSTEM` account, which is highly unusual.
 - Manual inspection confirmed the presence of `portscan.ps1` on the device.
+
+![image](https://github.com/user-attachments/assets/3eabcc9f-141a-441b-bc5a-40b8ae83dbc2)
+![image](https://github.com/user-attachments/assets/bc9c98f1-eb7a-45eb-8587-6b2982743385)
+![image](https://github.com/user-attachments/assets/2a556480-92fe-4aed-8488-f73644725dc4)
 
 ---
 
@@ -84,9 +92,10 @@ DeviceProcessEvents
 
 ### ✅ **Actions Taken**
 1. **Isolated the affected device** (`rich-mde-test`) from the network.
-2. **Conducted a malware scan**, which returned no results.
-3. **Investigated for persistence mechanisms** (scheduled tasks, registry changes, etc.).
-4. **Reimaged/rebuilt the machine** as a precautionary measure.
+   ![image](https://github.com/user-attachments/assets/3278a69d-7bce-429d-8741-bf94ef5372fd)
+3. **Conducted a malware scan**, which returned no results.
+4. **Investigated for persistence mechanisms** (scheduled tasks, registry changes, etc.).
+5. **Reimaged/rebuilt the machine** as a precautionary measure.
 
 ### 🔹 **Preventative & Hardening Measures**
 ✔️ Enable **PowerShell script logging** and network activity monitoring.  
